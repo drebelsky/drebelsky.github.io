@@ -5,6 +5,7 @@ Hello, I'm Daniel Rebelsky, a fifth-year coterminal student at Stanford Universi
 * [GitHub](https://github.com/drebelsky)
 * [LinkedIn](https://www.linkedin.com/in/daniel-rebelsky/)
 * my [Music 220A Portfolio](https://ccrma.stanford.edu/~rebelsky/220a/)
+* [Various thoughts/essays/notes/etc...](./notes)
 
 You can see watch/hear some more of my performances at
 * [SLOrktastic Chamber Music 2023](https://slork.stanford.edu/events/2023/slorktastic/)
