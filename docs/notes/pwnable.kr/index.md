@@ -11,3 +11,4 @@ Note that at the current time, I only intend to post solutions for challenges fr
 * [bof](./bof.html)
 * [flag](./flag.html)
 * [passcode](./passcode.html)
+* [random](./random.html)

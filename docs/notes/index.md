@@ -15,3 +15,4 @@ I haven't fully decided how I want to organize this yet, sorry.
 * [bof](./pwnable.kr/bof.html)
 * [index](./pwnable.kr/index.html)
 * [passcode](./pwnable.kr/passcode.html)
+* [random](./pwnable.kr/random.html)
