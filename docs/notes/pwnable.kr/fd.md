@@ -63,5 +63,6 @@ If we copy the flag (run on `pwnable.kr`) and put it in the `Flag? :` textbox on
 
 To expand upon later:
 
-* Using bash redirections.
-* partial `read`s.
+* Using bash redirections
+* partial `read`s
+* which parts are entered in the solution

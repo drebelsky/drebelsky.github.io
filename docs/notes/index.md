@@ -11,3 +11,4 @@ I haven't fully decided how I want to organize this yet, sorry.
 [pwnable.kr](./pwnable.kr)
 
 * [fd](./pwnable.kr/fd.html)
+* [collision](./pwnable.kr/collision.html)
