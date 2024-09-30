@@ -68,7 +68,7 @@ $ file bof
 bof: ELF 32-bit LSB shared object, Intel 80386, version 1 (SYSV), dynamically linked, interpreter /lib/ld-linux.so.2, for GNU/Linux 2.6.24, BuildID[sha1]=ed643dfe8d026b7238d3033b0d0bcc499504f273, not stripped
 ```
 
-We have a 32-bit executable, so `key` should appear on the stack right above the return address (on Linux for a 64-bit executable, we'd expect key to be in `%edi`). Looking at the disassembly, e get
+We have a 32-bit executable, so `key` should appear on the stack right above the return address (on Linux for a 64-bit executable, we'd expect key to be in `%edi`). Looking at the disassembly, we get
 
 ```
 $ objdump --disassemble=func bof 
