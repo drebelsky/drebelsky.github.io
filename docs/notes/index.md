@@ -14,3 +14,4 @@ I haven't fully decided how I want to organize this yet, sorry.
 * [collision](./pwnable.kr/collision.html)
 * [bof](./pwnable.kr/bof.html)
 * [index](./pwnable.kr/index.html)
+* [passcode](./pwnable.kr/passcode.html)
