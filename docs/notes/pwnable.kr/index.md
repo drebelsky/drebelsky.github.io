@@ -9,3 +9,4 @@ Note that at the current time, I only intend to post solutions for challenges fr
 * [fd](./fd.html)
 * [collision](./collision.html)
 * [bof](./bof.html)
+* [flag](./flag.html)
