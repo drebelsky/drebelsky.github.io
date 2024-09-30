@@ -131,12 +131,12 @@ Some notes:
 
 * We use the `-c` flag of python to run the command we specify without launching a REPL or writing a script.
 * We write using `bytes` instead of a string, so we can be very sure of the number of bytes written/encoding used (note that we use `sys.stdout.buffer.write` instead of `print`)
-* We use the subshell with `python` and `cat` so that we can interact with the program after the exploit has run (when we should be in the shell (note the call to `execve("/bin/sh")`).
+* We use the subshell with `python` and `cat` so that we can interact with the program after the exploit has run (when we should be in the shell (note the call to `system("/bin/sh")`).
 * We include a trailing newline so that the `gets` call terminates.
 
 An equivalent script using [`pwntools`](https://github.com/Gallopsled/pwntools) could look something like
 
-```python3
+```python
 from pwn import *
 context(arch='i386', os='linux')
 
@@ -145,7 +145,7 @@ r.sendline(b"0" * 0x34 + p32(0xcafebabe))
 r.interactive()
 ```
 
-Then, in interactive (note using interactive mode both gives us a shell we can use to look around in and avoids the problem where we'd otherwise have to make sure part of the exploit goes to the `gets` and the other part happens after the `execve`),
+Then, we can find the flag by interacting with the shell (note using interactive mode both gives us a shell we can use to look around in and avoids the problem where we'd otherwise have to make sure part of the exploit goes to the `gets` and the other part happens after the `system`),
 
 ```
 [+] Opening connection to pwnable.kr on port 9000: Done
