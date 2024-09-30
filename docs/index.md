@@ -10,5 +10,5 @@ Hello, I'm Daniel Rebelsky. I studied computer science and music at Stanford, wh
 You can see watch/hear some more of my performances at
 * [SLOrktastic Chamber Music 2023](https://slork.stanford.edu/events/2023/slorktastic/)
 * [2023: A SLOrker's Guide to Computer Music](https://slork.stanford.edu/events/2023/spring/)
-* <https://soundcloud.com/stanfordjazzorchestra> (I played baritone saxophone in the Stanford Jazz Orchestra from fall of 2019 through spring of 2023, so any other recordings from that time period probably include me).
+* <https://soundcloud.com/stanfordjazzorchestra> (I played baritone saxophone in the Stanford Jazz Orchestra from fall of 2019 through spring of 2023, so any recordings from that time period probably include me).
 * My [YouTube](https://www.youtube.com/@danielrebelsky5075/videos), which includes both the animated short films I made for the Iowa High School Speech Association (IHSSA) competitions and my performances of hitting a drum 10,000 times (for which I used to be the first to pop up when Googling "Hitting a drum 10,000 times (left hand)")
