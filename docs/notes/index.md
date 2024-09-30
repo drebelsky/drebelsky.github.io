@@ -12,3 +12,4 @@ I haven't fully decided how I want to organize this yet, sorry.
 
 * [fd](./pwnable.kr/fd.html)
 * [collision](./pwnable.kr/collision.html)
+* [bof](./pwnable.kr/bof.html)
