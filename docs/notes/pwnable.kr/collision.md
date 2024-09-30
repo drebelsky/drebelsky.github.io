@@ -50,7 +50,7 @@ int main(int argc, char* argv[]){
 
 Some basic things to note are that we'll put our password as the first argument, and that the password should be 20 characters long. `int`s on the platform are 32 bits, [little-endian](https://en.wikipedia.org/wiki/Endianness). The ["hash"](https://en.wikipedia.org/wiki/Hash_function) treats the password as 5 consecutive `int`s and returns their sum. (Note also that while [two's complement](https://en.wikipedia.org/wiki/Two%27s_complement) isn't required until C23 or so, `int`s here are (and overflow works as you'd expect based on that)). We want the hashcode to be equal to `0x21DD09EC`. That is, basically, our goal is to find five integers such that the low 32 bits of their sum is equal to `0x21DD09EC`. Ideally, each byte of each integer is between 30 and 126 (inclusive) since these are the easily inputable ASCII characters (technically, we can put any byte except 0 into part of the argument, it's just less convenient). We'll start with 0x20202020 (4 spaces, arbitrary, but also at the bottom of the range we set up) for each of the numbers and work from least to most significant byte.
 
-```python3
+```python
 # byte 1
    5 * 0x20 = 0xA0 # current sum
 0xEC - 0xA0 = 0x4C # EC is desired sum, 4C is delta we need to make up
