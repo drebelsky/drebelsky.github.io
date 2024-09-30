@@ -7,3 +7,4 @@ Note that at the current time, I only intend to post solutions for challenges fr
 > challenges in Toddler's Bottle are allowed to freely post the solutions online. However, please refrain from posting solution for challenges in other categories. But if you insist, post easy ones (solved by many people) and do not spoil too much details for the sake of fun.
 
 * [fd](./fd.html)
+* [collision](./collision.html)
