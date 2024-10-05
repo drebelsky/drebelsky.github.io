@@ -51,7 +51,7 @@ $ ./hello
 Hello world
 ```
 
-Now, since `gcc` auto-links against `libc`, the only reason we need `<stdio.h>` is for the prototype of `printf`, so we can simplify the `C` a little as
+Now, since `gcc` auto-links against `libc`, the only reason we need `<stdio.h>` is for the prototype of `printf`, so we can simplify the C a little as
 
 ```c
 // See man 3 printf
@@ -62,7 +62,7 @@ int main(void) {
 }
 ```
 
-If we look at `glibc`'s source for `printf`, it ends up still having a number of abstractions^[todo: link/document]. Interestingly, however, if we take a closer look at the generated code
+If we look at `glibc`'s source for `printf`, it ends up still having a number of abstractions[^1]. Interestingly, however, if we take a closer look at the generated code,
 
 ```
 $ objdump --disassemble=main hello
@@ -87,7 +87,7 @@ Disassembly of section .text:
     1152:       c3                      ret
 ```
 
-We can see that the compiler actually ends up replacing the `printf` call with a `puts` call. Still, there is a decent amount of code run before we actually get to the eventual syscall where we write to stdout. From start to `_start` ^[instruction counting code from https://stackoverflow.com/a/21639842], we run over 120,000 instructions (mostly related to loading the binary). From `_start` to `main`, we run over 200 more (`libc` setup code). From `main` to `puts`, there are over 600 (note, we didn't run with optimizations, but most of these instructions occur from the (lazy^[puts doesn't get a resolved value in the PLT until the first time it is dynamically called (i.e., not when the process starts up]) dynamic linking of `puts`, anyway). Then, there are about 3,000 more instructions until the `syscall` (partially dynamic symbol resolution, partially the abstractions atop the raw `write` syscall (
+we can see that the compiler actually ends up replacing the `printf` call with a `puts` call. Still, there is a decent amount of code run before we actually get to the eventual syscall where we write to stdout. From start to `_start`[^2], we run over 120,000 instructions (mostly related to loading the binary). From `_start` to `main`, we run over 200 more (`libc` setup code). From `main` to `puts`, there are over 600 (note, we didn't run with optimizations, but most of these instructions occur from the lazy[^3] dynamic linking of `puts`, anyway. Then, there are about 3,000 more instructions until the `syscall` (partially dynamic symbol resolution, partially the abstractions atop the raw `write` syscall (e.g., `FILE *`)).
 
 ```
 # abbreviated output (removed duplication of function and shared library names)
@@ -269,7 +269,7 @@ Hello world
 0x00007ffff7ea47a4 in write () from /usr/lib/libc.so.6
 ```
 
-Note that because most of these instructions happen in linking/loading/`libc`, using `-O3` doesn't substantially improve the instruction count (note that we can't immediately set the breakpoint on `*write+18` because `write` doesn't have a location until after `libc` is loaded (similarly, `puts` ends up resolving to `puts@plt` on entry)).
+Note that because most of these instructions happen in linking/loading/`libc`, using `-O3` doesn't substantially improve the instruction count (note that we can't immediately set the breakpoint on `*write+18` because `write` doesn't have a location until after `libc` is loaded (similarly, `puts`, on entry, ends up resolving to `puts@plt`)).
 
 ```
 $ gcc -O3 hello.c -o hello 
@@ -420,7 +420,7 @@ Hello world
 $
 ```
 
-Segfault eliminated. Now, let's break down the process a little further. Looking at the results of `strace gcc -o hello helo.S -nostdlib` (namely the `execve`s), we can see which subprograms are run. Primarily, we have `as` and `ld`^[it also used `/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/collect2`, but w won't need that].
+Segfault eliminated. Now, let's break down the process a little further. Looking at the results of `strace gcc -o hello helo.S -nostdlib` (namely the `execve`s), we can see which subprograms are run. Primarily, we have `as` and `ld`[^4].
 
 ```
 $ as hello.S -o hello.o
@@ -451,9 +451,9 @@ Dump of assembler code for function _start:
    0x000000000040102c <+44>:    syscall
 ```
 
-While we could change the linker script `ld` uses (see `man ld` (look for `-T`)), the language is somewhat obscure, so we'll move to creating the ELF file directly. While doing so, we'll continue to ignore some details (e.g.,`PT_GNU_STACK`). While you're following along, you may want to bring up some ELF reference (e.g., <https://en.wikipedia.org/wiki/Executable_and_Linkable_Format> or <https://refspecs.linuxbase.org/elf/elf.pdf>).
+While we could change the linker script `ld` uses (see `man ld` (look for `-T`)), the language is somewhat obtuse, so we'll move to creating the ELF file directly. While doing so, we'll continue to ignore some details (e.g.,`PT_GNU_STACK`). While you're following along, you may want to bring up some ELF reference (e.g., <https://en.wikipedia.org/wiki/Executable_and_Linkable_Format> or <https://refspecs.linuxbase.org/elf/elf.pdf>).
 
-Note that since GNU's `as` expects to output to an ELF file, getting just the assembly output is a little awkward (we use `objcopy` to treat the .text segment as its own ELF file). Note that the loadable segments must be page aligned (both in the file and in memory)---this took me some amount of debugging to realize,and in the process, I referenced [this blog post about crafting a 105 byte "Hello, world!" executable](https://nathanotterness.com/2021/10/tiny_elf_modernized.html); the end program ends up being remarkably similar, so I felt this was especially important to note.
+Note that since GNU's `as` expects to output to an ELF file, getting just the assembly output is a little awkward (we use `objcopy` to treat the .text segment as its own ELF file). Note that the loadable segments must be page aligned (both in the file and in memory)---this took me some amount of debugging to realize, and in the process, I referenced [this blog post about crafting a 105 byte "Hello, world!" executable](https://nathanotterness.com/2021/10/tiny_elf_modernized.html); the end program ends up being remarkably similar, so I felt this was especially important to note.
 
 ```asm
 START:
@@ -648,7 +648,7 @@ $ objdump -D hello
 hello:     file format elf64-x86-64
 ```
 
-Now, let's see if we can replace our use of `as` and `objcopy`. While I was initially tempted to hand assemble the file, I realized that there would be no way to distinguish this from me just writing the bytes as seen by, e.g., `xxd`. So, instead, we'll write a quick-n-dirty/ugly assembler in Python, just to demonstrate the basics of what the assembly process involves (in particular, to avoid discussing lexing/parsing we'll embed using Python types and the assembler will support the bare minimum we need; we'll also abuse some python metaprogamming capabilities). To figure out how to encode an instruction, we'll be referencing [AMD64 Architecure Programmer's Manual Volume 3: Genral-Purpose and System Instructions](https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf).
+Now, let's see if we can replace our use of `as` and `objcopy`. While I was initially tempted to hand assemble the file, I realized that there would be no way to distinguish this from me just writing the bytes as seen by, e.g., `xxd`. So, instead, we'll write a quick-n-dirty/ugly assembler in Python, just to demonstrate the basics of what the assembly process involves (in particular, to avoid discussing lexing/parsing we'll embed using Python types and the assembler will support the bare minimum we need; we'll also abuse Python's `globals`). To figure out how to encode an instruction, we'll be referencing [AMD64 Architecure Programmer's Manual Volume 3: Genral-Purpose and System Instructions](https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24594.pdf).
 
 ```python
 from os import chmod
@@ -774,3 +774,8 @@ Hello world
 ```
 
 Without digging into the kernel, that's about as far as we can go.
+
+[^1]: todo: link/document
+[^2]: instruction counting code from <https://stackoverflow.com/a/21639842>
+[^3]: `puts` doesn't get a resolved value in the PLT until the first time it is dynamically called (i.e., not when the process starts up)
+[^4]: it also used `/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/collect2`, but we won't need that
