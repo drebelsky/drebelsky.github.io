@@ -62,7 +62,7 @@ int main(void) {
 }
 ```
 
-If we look at `glibc`'s source for `printf`, it ends up still having a number of abstractions[^1]. Interestingly, however, if we take a closer look at the generated code,
+If we look at `glibc`'s source for `printf`, it ends up still using a number of abstractions[^1]. Interestingly, however, if we take a closer look at the generated code,
 
 ```
 $ objdump --disassemble=main hello
@@ -87,7 +87,7 @@ Disassembly of section .text:
     1152:       c3                      ret
 ```
 
-we can see that the compiler actually ends up replacing the `printf` call with a `puts` call. Still, there is a decent amount of code run before we actually get to the eventual syscall where we write to stdout. From start to `_start`[^2], we run over 120,000 instructions (mostly related to loading the binary). From `_start` to `main`, we run over 200 more (`libc` setup code). From `main` to `puts`, there are over 600 (note, we didn't run with optimizations, but most of these instructions occur from the lazy[^3] dynamic linking of `puts`, anyway. Then, there are about 3,000 more instructions until the `syscall` (partially dynamic symbol resolution, partially the abstractions atop the raw `write` syscall (e.g., `FILE *`)).
+we can see that the compiler actually ends up replacing the `printf` call with a `puts` call. Still, there is a decent amount of code run before we actually get to the eventual syscall where we write to stdout. From start to `_start`[^2], we run over 120,000 instructions (mostly related to loading the binary). From `_start` to `main`, we run over 200 more (`libc` setup code). From `main` to `puts`, there are over 600 (note, we didn't run with optimizations, but most of these instructions occur from the lazy[^3] dynamic linking of `puts`, anyway). Then, there are about 3,000 more instructions until the `syscall` (partially dynamic symbol resolution, partially the abstractions atop the raw `write` syscall (e.g., `FILE *`)).
 
 ```
 # abbreviated output (removed duplication of function and shared library names)
@@ -775,7 +775,7 @@ Hello world
 
 Without digging into the kernel, that's about as far as we can go.
 
-[^1]: todo: link/document
+[^1]: See, e.g., [printf.c](https://sourceware.org/git/?p=glibc.git;a=blob;f=stdio-common/printf.c;h=f4e14c400220e8a2c4b9a25293327045edff6af6;hb=3d1aed874918c466a4477af1da35983ab036690e) and [vprintf-internal.c](https://sourceware.org/git/?p=glibc.git;a=blob;f=stdio-common/vfprintf-internal.c;h=771beca9bf71f4c817800fb44c45c19ec1e3a9d3;hb=3d1aed874918c466a4477af1da35983ab036690e)
 [^2]: instruction counting code from <https://stackoverflow.com/a/21639842>
 [^3]: `puts` doesn't get a resolved value in the PLT until the first time it is dynamically called (i.e., not when the process starts up)
 [^4]: it also used `/usr/lib/gcc/x86_64-pc-linux-gnu/14.2.1/collect2`, but we won't need that
