@@ -6,6 +6,8 @@ I haven't fully decided how I want to organize this yet, sorry.
 
 [140E tool/command line suggestions](./140e.html)
 
+[Making a hello world binary "from scratch"](./hello-world-manual.html)
+
 ## CTF writeups
 
 [pwnable.kr](./pwnable.kr)
